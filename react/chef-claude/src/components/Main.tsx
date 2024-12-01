@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import Ingredients from "./Ingredients"
 import Recipe from "./Recipe"
 import { getRecipeFromMistral} from "../ai.tsx"
@@ -6,6 +6,7 @@ import { getRecipeFromMistral} from "../ai.tsx"
 export default function Main() {
     const [ingredients, setIngredients] = useState<string[]>([])
     const [recipe, setRecipe] = useState<string>("")
+    const recipeSection = useRef<HTMLDivElement>(null)
 
     function addIngredient(formData: FormData) {
         const newIngredient = formData.get('ingredient')
@@ -21,6 +22,12 @@ export default function Main() {
         setRecipe(typeof generatedRecipe === 'string' ? generatedRecipe : "No recipe found")
     }
 
+    useEffect(() => {
+        if (recipe != "" && recipeSection.current !== null) {
+            recipeSection.current?.scrollIntoView({ behavior: 'smooth' })
+        }
+    }, [recipe])
+
     return (
         <main>
             <form action={addIngredient} className="add-ingredient-form">
@@ -32,8 +39,8 @@ export default function Main() {
                 />
                 <button >Add ingredient</button>
             </form>
-            {ingredients.length > 0 ? <Ingredients ingredients={ingredients} getRecipe={getRecipe} /> : null}
-            {recipe != "No recipe found" ? <Recipe recipe={recipe} /> :recipe}
+            {ingredients.length > 0 ? <Ingredients ingredients={ingredients} getRecipe={getRecipe} ref={recipeSection} /> : null}
+            {recipe != "" ? <Recipe recipe={recipe} />: recipe}
         </main>
     )
 }
