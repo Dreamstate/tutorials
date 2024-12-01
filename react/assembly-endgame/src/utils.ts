@@ -1,4 +1,4 @@
-export function getFarewellText(language) {
+export function getFarewellText(language: string) {
     const options = [
         `Farewell, ${language}`,
         `Adios, ${language}`,
